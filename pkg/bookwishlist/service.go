@@ -43,6 +43,28 @@ func (s *Service) UpdateBook(ctx context.Context, id string) error {
 	return s.repository.UpdateBook(ctx, updatedBook)
 }
 
+func (s *Service) UpdateAllBooks(ctx context.Context) error {
+	books, err := s.repository.GetBooks(ctx)
+	if err != nil {
+		return jErrors.Annotate(err, "getting books from repository")
+	}
+
+	//TODO: parallelize
+	for _, book := range books {
+		updatedBook, err := s.gateway.GetBookByID(ctx, book.ID)
+		if err != nil {
+			return jErrors.Annotate(err, "getting book from gateway")
+		}
+
+		err = s.repository.UpdateBook(ctx, updatedBook)
+		if err != nil {
+			return jErrors.Annotate(err, "updating book in repository")
+		}
+	}
+
+	return nil
+}
+
 func (s *Service) DeleteBook(ctx context.Context, id string) error {
 	return s.repository.DeleteBook(ctx, id)
 }

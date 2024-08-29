@@ -22,6 +22,10 @@ github.com/montanaflynn/stats v0.7.1 h1:etflOAAHORrCC44V+aR6Ftzort912ZU+YLiSTuV8
 github.com/montanaflynn/stats v0.7.1/go.mod h1:etXPPgVO6n31NxCd9KQUMvCM+ve0ruNzt6R8Bnaayow=
 github.com/spf13/pflag v1.0.5 h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=
 github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+github.com/willoma/bulma-gomponents v0.11.1 h1:l5lPRGgxkv0SCMle5SNaF7YsVODoud9hXLGsyFo9IRc=
+github.com/willoma/bulma-gomponents v0.11.1/go.mod h1:1hkVH4/pPHtlPH5aIkS1pHMaerOV3SI1SDe8QXShHqA=
+github.com/willoma/gomplements v0.6.1 h1:JtOVIHFnMXqloflQHafVmsvtqlpf5b+d0Uj18KqrP1k=
+github.com/willoma/gomplements v0.6.1/go.mod h1:G/9prZq6jA7EZwIu0AF27HtULgAbUbOVp9oRhsunpkg=
 github.com/xdg-go/pbkdf2 v1.0.0 h1:Su7DPu48wXMwC3bs7MCNG+z4FhcyEuz5dlvchbq0B0c=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.1.2 h1:FHX5I5B4i4hKRVRBCFRxq1iQRej7WO3hhBuJf+UUySY=

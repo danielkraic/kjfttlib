@@ -27,6 +27,8 @@ func main() {
 
 	pflag.Parse()
 
+	loadEnvs(cfg)
+
 	os.Exit(run(cfg))
 }
 
@@ -49,4 +51,22 @@ func run(cfg *Config) int {
 	}
 
 	return 0
+}
+
+func loadEnvs(cfg *Config) {
+	cfg.BookWishlist.Transport.Addr = getEnvOrDefault("KJFTTLIB_ADDR", cfg.BookWishlist.Transport.Addr)
+	cfg.BookWishlist.Transport.Auth.Username = getEnvOrDefault("KJFTTLIB_AUTH_USERNAME", cfg.BookWishlist.Transport.Auth.Username)
+	cfg.BookWishlist.Transport.Auth.Password = getEnvOrDefault("KJFTTLIB_AUTH_PASSWORD", cfg.BookWishlist.Transport.Auth.Password)
+
+	cfg.BookWishlist.Repository.Mongo.URI = getEnvOrDefault("KJFTTLIB_MONGO_URI", cfg.BookWishlist.Repository.Mongo.URI)
+	cfg.BookWishlist.Repository.Mongo.Database = getEnvOrDefault("KJFTTLIB_MONGO_DATABASE", cfg.BookWishlist.Repository.Mongo.Database)
+	cfg.BookWishlist.Repository.Mongo.Collection = getEnvOrDefault("KJFTTLIB_MONGO_COLLECTION", cfg.BookWishlist.Repository.Mongo.Collection)
+}
+
+func getEnvOrDefault(key, def string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+
+	return def
 }

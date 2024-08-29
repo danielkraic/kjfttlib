@@ -2,37 +2,63 @@ package components
 
 import (
 	g "github.com/maragudk/gomponents"
-	c "github.com/maragudk/gomponents/components"
-	. "github.com/maragudk/gomponents/html"
+	html "github.com/maragudk/gomponents/html"
+	b "github.com/willoma/bulma-gomponents"
+	e "github.com/willoma/gomplements"
 )
 
-func Page(title, path string, body g.Node) g.Node {
-	return c.HTML5(c.HTML5Props{
-		Title:    title,
-		Language: "en",
-		Head: []g.Node{
-			Link(Rel("stylesheet"), Href("https://unpkg.com/tailwindcss@2.1.2/dist/base.min.css")),
-			Link(Rel("stylesheet"), Href("https://unpkg.com/tailwindcss@2.1.2/dist/components.min.css")),
-			Link(Rel("stylesheet"), Href("https://unpkg.com/@tailwindcss/typography@0.4.0/dist/typography.min.css")),
-			Link(Rel("stylesheet"), Href("https://unpkg.com/tailwindcss@2.1.2/dist/utilities.min.css")),
-		},
-		Body: []g.Node{
-			Navbar(path, []PageLink{
-				{Path: "/add-book", Name: "Add book"},
-				{Path: "/about", Name: "About"},
-			}),
-			Container(
-				Prose(body),
-				PageFooter(),
+func Page(title, path string, pageBody g.Node) g.Node {
+	return b.HTML(
+		b.HTitle(title),
+		b.Language("en"),
+		b.Head(
+			html.Meta(html.Charset("utf-8")),
+			html.Link(html.Rel("stylesheet"), html.Href("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css")),
+		),
+		e.Div(
+			e.Class("container hero is-fullheight"),
+			e.Div(
+				e.Class("hero-head"),
+				navbar(),
 			),
-		},
-	})
+			e.Div(
+				e.Class("hero-body"),
+				b.Container(
+					pageBody,
+				),
+			),
+			e.Div(
+				e.Class("hero-foot"),
+				footer(),
+			),
+		),
+		b.Script("https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/sortable.min.js"),
+	)
 }
 
-func Container(children ...g.Node) g.Node {
-	return Div(Class("max-w-7xl mx-auto px-2 sm:px-6 lg:px-8"), g.Group(children))
+func navbar() g.Node {
+	return b.Navbar(
+		b.NavbarBrand(
+			b.NavbarAHref(
+				"/",
+				e.Strong("KJFTTLIB"),
+			),
+		),
+		b.NavbarStart(
+			b.NavbarAHref("/", "Home"),
+			b.NavbarAHref("/add-book", "Add book"),
+			b.NavbarAHref("/about", "About"),
+		),
+		b.NavbarEnd(
+			b.NavbarAHref("https://github.com/danielkraic/kjfttlib", "Github"),
+		),
+	)
 }
 
-func Prose(children ...g.Node) g.Node {
-	return Div(Class("prose"), g.Group(children))
+func footer() g.Node {
+	return b.Footer(
+		e.Div(
+			e.Strong("KJFTTLIB"), " created by ", e.AHref("https://github.com/danielkraic", "Daniel Kraic"), ".",
+		),
+	)
 }

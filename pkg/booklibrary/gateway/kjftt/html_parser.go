@@ -41,6 +41,10 @@ func ParseBookFromHTML(reader io.Reader) (*book.Model, error) {
 		decodedBook.Instances = append(decodedBook.Instances, instance)
 	})
 
+	if decodedBook.Title == "" && decodedBook.Author == "" {
+		return nil, jErrors.Trace(book.ErrNotFound)
+	}
+
 	err = validateParsedBook(decodedBook)
 	if err != nil {
 		return nil, jErrors.Annotate(err, "validating parsed book")
