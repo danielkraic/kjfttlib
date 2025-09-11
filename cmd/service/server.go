@@ -58,6 +58,6 @@ func (s *Server) Close() error {
 }
 
 func (s *Server) ListenAndServe() error {
-	slog.Info("Starting HTTP server", slog.String("addr", s.server.Addr))
+	slog.Info("Starting HTTP server", slog.String("addr", "http://"+s.server.Addr))
 	return s.server.ListenAndServe()
 }

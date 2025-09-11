@@ -6,6 +6,7 @@ import (
 
 	"github.com/danielkraic/kjfttlib/pkg/book"
 	g "github.com/maragudk/gomponents"
+	html "github.com/maragudk/gomponents/html"
 	b "github.com/willoma/bulma-gomponents"
 	"github.com/willoma/bulma-gomponents/fa"
 	e "github.com/willoma/gomplements"
@@ -21,9 +22,20 @@ func PageBooks(books []*book.Model) (string, g.Node) {
 			b.Title(
 				"KJFTT books wishlist",
 			),
+			// Search input field
+			b.Field(
+				b.Control(
+					b.InputText(
+						e.Placeholder("Search books by title, author, or ID..."),
+						e.ID("book-search"),
+						g.Attr("oninput", "filterBooks()"),
+					),
+				),
+			),
 			b.Table(
 				b.Striped,
 				e.Class("sortable"),
+				e.ID("books-table"),
 				b.Hoverable,
 				b.FullWidth,
 				b.HeadRow(
@@ -77,6 +89,31 @@ func PageBooks(books []*book.Model) (string, g.Node) {
 					}),
 				),
 			),
+			// JavaScript for search functionality
+			html.Script(g.Raw(`
+				function filterBooks() {
+					const searchInput = document.getElementById('book-search');
+					const table = document.getElementById('books-table');
+					const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+					const searchTerm = searchInput.value.toLowerCase();
+
+					for (let i = 0; i < rows.length; i++) {
+						const cells = rows[i].getElementsByTagName('td');
+						let rowText = '';
+
+						// Concatenate text from ID, Title, and Author columns (first 3 columns)
+						for (let j = 0; j < Math.min(3, cells.length); j++) {
+							rowText += cells[j].textContent.toLowerCase() + ' ';
+						}
+
+						if (rowText.includes(searchTerm)) {
+							rows[i].style.display = '';
+						} else {
+							rows[i].style.display = 'none';
+						}
+					}
+				}
+			`)),
 		)
 }
 

@@ -34,7 +34,7 @@ func ParseBookFromHTML(reader io.Reader) (*book.Model, error) {
 		s.Find(`td:nth-child(4) > a`).First().Each(func(i int, s *goquery.Selection) {
 			instance.Location = fixExtraSpaces(s.Text())
 		})
-		s.Find(`td:nth-child(5)`).First().Each(func(i int, s *goquery.Selection) {
+		s.Find(`td:nth-child(6)`).First().Each(func(i int, s *goquery.Selection) {
 			instance.Status = s.Text()
 		})
 
