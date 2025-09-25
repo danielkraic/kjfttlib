@@ -20,7 +20,11 @@ func main() {
 	pflag.StringVar(&cfg.BookWishlist.Repository.Mongo.URI, "mongo-uri", "mongodb://localhost:27017", "MongoDB URI")
 	pflag.StringVar(&cfg.BookWishlist.Repository.Mongo.Database, "mongo-database", "kjftt", "MongoDB database name")
 	pflag.StringVar(&cfg.BookWishlist.Repository.Mongo.Collection, "mongo-collection", "books", "MongoDB collection name")
-	pflag.DurationVar(&cfg.BookWishlist.Repository.Mongo.OperationTimeout, "mongo-operation-timeout", 10*time.Second, "Operation timeout for MongoDB request or query")
+	pflag.DurationVar(&cfg.BookWishlist.Repository.Mongo.OperationTimeout, "mongo-operation-timeout", 15*time.Second, "Operation timeout for MongoDB request or query")
+
+	pflag.StringVar(&cfg.BookWishlist.Repository.Firestore.ProjectID, "firestore-project-id", "", "Google Cloud Firestore project ID")
+	pflag.StringVar(&cfg.BookWishlist.Repository.Firestore.Collection, "firestore-collection", "books", "Firestore collection name")
+	pflag.DurationVar(&cfg.BookWishlist.Repository.Firestore.OperationTimeout, "firestore-operation-timeout", 15*time.Second, "Operation timeout for Firestore request or query")
 
 	pflag.StringVar(&cfg.BookLibrary.KJFTT.BaseURL, "kjftt-url", "https://ttkjf.dawinci.sk", "Base URL of KJFTT")
 	pflag.DurationVar(&cfg.BookLibrary.KJFTT.RequestTimeout, "kjftt-request-timeout", 10*time.Second, "Request timeout for KJFTT")
@@ -35,18 +39,18 @@ func main() {
 func run(cfg *Config) int {
 	server, err := NewServer(cfg)
 	if err != nil {
-		slog.Error(jErrors.ErrorStack(err))
+		slog.Error(jErrors.Details(err))
 		return 1
 	}
 
 	defer func() {
 		if err := server.Close(); err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 		}
 	}()
 
 	if err := server.ListenAndServe(); err != nil {
-		slog.Error(jErrors.ErrorStack(err))
+		slog.Error(jErrors.Details(err))
 		return 1
 	}
 
@@ -61,6 +65,9 @@ func loadEnvs(cfg *Config) {
 	cfg.BookWishlist.Repository.Mongo.URI = getEnvOrDefault("KJFTTLIB_MONGO_URI", cfg.BookWishlist.Repository.Mongo.URI)
 	cfg.BookWishlist.Repository.Mongo.Database = getEnvOrDefault("KJFTTLIB_MONGO_DATABASE", cfg.BookWishlist.Repository.Mongo.Database)
 	cfg.BookWishlist.Repository.Mongo.Collection = getEnvOrDefault("KJFTTLIB_MONGO_COLLECTION", cfg.BookWishlist.Repository.Mongo.Collection)
+
+	cfg.BookWishlist.Repository.Firestore.ProjectID = getEnvOrDefault("KJFTTLIB_FIRESTORE_PROJECT_ID", cfg.BookWishlist.Repository.Firestore.ProjectID)
+	cfg.BookWishlist.Repository.Firestore.Collection = getEnvOrDefault("KJFTTLIB_FIRESTORE_COLLECTION", cfg.BookWishlist.Repository.Firestore.Collection)
 }
 
 func getEnvOrDefault(key, def string) string {

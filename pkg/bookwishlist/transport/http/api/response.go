@@ -36,7 +36,7 @@ func newAPIError(err error) *apiError {
 	errMessage := err.Error()
 
 	if errStatusCode == http.StatusInternalServerError {
-		slog.Error(jErrors.ErrorStack(err))
+		slog.Error(jErrors.Details(err))
 		errMessage = "internal server error"
 	}
 

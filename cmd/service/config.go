@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/danielkraic/kjfttlib/pkg/booklibrary/gateway/kjftt"
+	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/repository/firestore"
 	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/repository/mongo"
 	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/transport/http/api"
 	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/transport/http/auth"
@@ -30,5 +31,6 @@ type TransportConfig struct {
 }
 
 type RepositoryConfig struct {
-	Mongo mongo.Config
+	Mongo     mongo.Config
+	Firestore firestore.Config
 }

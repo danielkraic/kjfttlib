@@ -38,10 +38,10 @@ func New(cfg *Config, authCfg *auth.Config, service *bookwishlist.Service) *Web 
 func (w *Web) Register(router *http.ServeMux) {
 	router.Handle("/", w.createHandlerBooksGet())
 	router.Handle("/about", createComponentsHandler(components.PageAbout()))
-	router.Handle("/add-book", w.createHandlerBookAdd())
-	router.Handle("/books/refresh", w.createHandlerBooksRefreshAll())
-	router.Handle("/books/refresh/{bookid}", w.createHandlerBookRefresh())
-	router.Handle("/books/delete/{bookid}", w.createHandlerBookDelete())
+	router.Handle("/add-book", w.auth.Middleware(w.createHandlerBookAdd()))
+	router.Handle("/books/refresh", w.auth.Middleware(w.createHandlerBooksRefreshAll()))
+	router.Handle("/books/refresh/{bookid}", w.auth.Middleware(w.createHandlerBookRefresh()))
+	router.Handle("/books/delete/{bookid}", w.auth.Middleware(w.createHandlerBookDelete()))
 }
 
 func (w *Web) createHandlerBooksGet() http.Handler {
@@ -53,7 +53,7 @@ func (w *Web) createHandlerBooksGet() http.Handler {
 
 		books, err := w.wishlist.GetBooks(r.Context())
 		if err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 			http.Error(wr, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -61,7 +61,7 @@ func (w *Web) createHandlerBooksGet() http.Handler {
 		title, page := components.PageBooks(books)
 		err = components.Page(title, r.URL.Path, page).Render(wr)
 		if err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 			http.Error(wr, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -84,7 +84,7 @@ func (w *Web) createHandlerBookAdd() http.Handler {
 		title, body := components.PageAddBook(notifications...)
 		err := components.Page(title, r.URL.Path, body).Render(wr)
 		if err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 			http.Error(wr, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -106,7 +106,7 @@ func (w *Web) handleBookAdd(r *http.Request) handleBookAddResult {
 
 	bookID, err := getBookIDFromURL(bookIDValue)
 	if err != nil {
-		slog.Error(jErrors.ErrorStack(jErrors.Annotate(err, "get book ID from URL")))
+		slog.Error(jErrors.Details(jErrors.Annotate(err, "get book ID from URL")))
 		if errors.Is(jErrors.Cause(err), book.ErrNotFound) {
 			return handleBookAddResult{
 				UserErr: err.Error(),
@@ -120,7 +120,7 @@ func (w *Web) handleBookAdd(r *http.Request) handleBookAddResult {
 
 	err = w.wishlist.AddBook(r.Context(), bookID)
 	if err != nil {
-		slog.Error(jErrors.ErrorStack(jErrors.Annotate(err, "add book to wishlist")))
+		slog.Error(jErrors.Details(jErrors.Annotate(err, "add book to wishlist")))
 
 		if errors.Is(jErrors.Cause(err), book.ErrAlreadyExists) {
 			return handleBookAddResult{
@@ -150,7 +150,7 @@ func (w *Web) createHandlerBookRefresh() http.Handler {
 
 		err := w.wishlist.UpdateBook(r.Context(), bookID)
 		if err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 			http.Error(wr, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -163,7 +163,7 @@ func (w *Web) createHandlerBooksRefreshAll() http.Handler {
 	return http.HandlerFunc(func(wr http.ResponseWriter, r *http.Request) {
 		err := w.wishlist.UpdateAllBooks(r.Context())
 		if err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 			http.Error(wr, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -182,7 +182,7 @@ func (w *Web) createHandlerBookDelete() http.Handler {
 
 		err := w.wishlist.DeleteBook(r.Context(), bookID)
 		if err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 			http.Error(wr, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -195,7 +195,7 @@ func createComponentsHandler(title string, body gomponents.Node) http.HandlerFun
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := components.Page(title, r.URL.Path, body).Render(w)
 		if err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
