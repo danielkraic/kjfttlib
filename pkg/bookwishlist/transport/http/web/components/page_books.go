@@ -5,11 +5,11 @@ import (
 	"regexp"
 
 	"github.com/danielkraic/kjfttlib/pkg/book"
-	g "github.com/maragudk/gomponents"
-	html "github.com/maragudk/gomponents/html"
 	b "github.com/willoma/bulma-gomponents"
 	"github.com/willoma/bulma-gomponents/fa"
 	e "github.com/willoma/gomplements"
+	g "maragu.dev/gomponents"
+	html "maragu.dev/gomponents/html"
 )
 
 const _instanceStatusAvailable = "Voľný"

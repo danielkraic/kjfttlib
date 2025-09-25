@@ -1,10 +1,10 @@
 package components
 
 import (
-	g "github.com/maragudk/gomponents"
-	html "github.com/maragudk/gomponents/html"
 	b "github.com/willoma/bulma-gomponents"
 	e "github.com/willoma/gomplements"
+	g "maragu.dev/gomponents"
+	html "maragu.dev/gomponents/html"
 )
 
 func PageAbout() (string, g.Node) {
