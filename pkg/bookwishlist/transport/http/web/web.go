@@ -38,10 +38,10 @@ func New(cfg *Config, authCfg *auth.Config, service *bookwishlist.Service) *Web 
 func (w *Web) Register(router *http.ServeMux) {
 	router.Handle("/", w.createHandlerBooksGet())
 	router.Handle("/about", createComponentsHandler(components.PageAbout()))
-	router.Handle("/add-book", w.createHandlerBookAdd())
-	router.Handle("/books/refresh", w.createHandlerBooksRefreshAll())
-	router.Handle("/books/refresh/{bookid}", w.createHandlerBookRefresh())
-	router.Handle("/books/delete/{bookid}", w.createHandlerBookDelete())
+	router.Handle("/add-book", w.auth.Middleware(w.createHandlerBookAdd()))
+	router.Handle("/books/refresh", w.auth.Middleware(w.createHandlerBooksRefreshAll()))
+	router.Handle("/books/refresh/{bookid}", w.auth.Middleware(w.createHandlerBookRefresh()))
+	router.Handle("/books/delete/{bookid}", w.auth.Middleware(w.createHandlerBookDelete()))
 }
 
 func (w *Web) createHandlerBooksGet() http.Handler {

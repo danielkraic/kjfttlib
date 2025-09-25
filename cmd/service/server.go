@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 
 	"github.com/danielkraic/kjfttlib/pkg/booklibrary/gateway/kjftt"
 	"github.com/danielkraic/kjfttlib/pkg/bookwishlist"
+	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/repository/firestore"
 	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/repository/mongo"
 	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/transport/http/api"
 	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/transport/http/web"
@@ -19,13 +21,13 @@ type Server struct {
 }
 
 func NewServer(cfg *Config) (*Server, error) {
-	mongoRepo, err := mongo.NewRepository(&cfg.BookWishlist.Repository.Mongo)
+	repository, err := createRepository(cfg)
 	if err != nil {
-		return nil, jErrors.Annotate(err, "creating mongo repository")
+		return nil, jErrors.Annotate(err, "create repository")
 	}
 
 	bookWishlist := bookwishlist.NewService(
-		mongoRepo,
+		repository,
 		kjftt.NewClient(&cfg.BookLibrary.KJFTT),
 	)
 
@@ -60,4 +62,28 @@ func (s *Server) Close() error {
 func (s *Server) ListenAndServe() error {
 	slog.Info("Starting HTTP server", slog.String("addr", "http://"+s.server.Addr))
 	return s.server.ListenAndServe()
+}
+
+func createRepository(cfg *Config) (bookwishlist.Repository, error) {
+	if cfg.BookWishlist.Repository.Firestore.ProjectID != "" {
+		firestoreRepo, err := firestore.NewRepository(context.Background(), &cfg.BookWishlist.Repository.Firestore)
+		if err != nil {
+			return nil, jErrors.Annotate(err, "creating firestore repository")
+		}
+
+		slog.Info("Using Firestore repository", slog.String("project_id", cfg.BookWishlist.Repository.Firestore.ProjectID))
+		return firestoreRepo, nil
+	}
+
+	if cfg.BookWishlist.Repository.Mongo.URI != "" {
+		mongoRepo, err := mongo.NewRepository(&cfg.BookWishlist.Repository.Mongo)
+		if err != nil {
+			return nil, jErrors.Annotate(err, "creating mongo repository")
+		}
+
+		slog.Info("Using MongoDB repository", slog.String("uri", cfg.BookWishlist.Repository.Mongo.URI))
+		return mongoRepo, nil
+	}
+
+	return nil, jErrors.New("no repository configured, please provide either MongoDB URI or Firestore project ID")
 }
