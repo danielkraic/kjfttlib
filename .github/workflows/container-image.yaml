@@ -1,10 +1,10 @@
-name: Build and Push Docker Image
+name: Container image
 
 on:
   push:
     branches:
       - main
-      - feature/docker-build-push
+      - feature/docker-hub-image
 
 jobs:
   build-and-push:
