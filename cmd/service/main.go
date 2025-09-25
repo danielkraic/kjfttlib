@@ -12,7 +12,7 @@ import (
 func main() {
 	cfg := &Config{}
 
-	pflag.StringVar(&cfg.BookWishlist.Transport.Addr, "addr", ":8080", "HTTP server address")
+	pflag.StringVar(&cfg.BookWishlist.Transport.Addr, "addr", "0.0.0.0:8080", "HTTP server address")
 	pflag.DurationVar(&cfg.BookWishlist.Transport.API.RequestTimeout, "request-timeout", 20*time.Second, "Request timeout")
 	pflag.StringVar(&cfg.BookWishlist.Transport.Auth.Username, "username", "", "Auth username")
 	pflag.StringVar(&cfg.BookWishlist.Transport.Auth.Password, "password", "", "Auth password")

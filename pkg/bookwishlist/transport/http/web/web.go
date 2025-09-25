@@ -14,7 +14,7 @@ import (
 	"github.com/danielkraic/kjfttlib/pkg/bookwishlist/transport/http/web/components"
 
 	jErrors "github.com/juju/errors"
-	gomponents "github.com/maragudk/gomponents"
+	gomponents "maragu.dev/gomponents"
 )
 
 type Config struct {
