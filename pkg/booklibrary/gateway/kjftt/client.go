@@ -2,6 +2,7 @@ package kjftt
 
 import (
 	"context"
+	"io"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -63,6 +64,13 @@ func (c *Client) GetBookByID(ctx context.Context, id string) (*book.Model, error
 	}()
 
 	if resp.StatusCode != http.StatusOK {
+		respBody, err := io.ReadAll(resp.Body)
+		if err != nil {
+			slog.Error(jErrors.Details(jErrors.Annotate(err, "reading response body")))
+		} else {
+			slog.Info("Response body", slog.String("body", string(respBody)))
+		}
+
 		return nil, jErrors.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
@@ -102,7 +110,7 @@ func (c *Client) createGetBookRequest(ctx context.Context, bookID string) (*http
 	}
 
 	// add user agent to act like a web browser
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+	// req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
 
 	return req, nil
 }

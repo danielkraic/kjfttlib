@@ -39,18 +39,18 @@ func main() {
 func run(cfg *Config) int {
 	server, err := NewServer(cfg)
 	if err != nil {
-		slog.Error(jErrors.ErrorStack(err))
+		slog.Error(jErrors.Details(err))
 		return 1
 	}
 
 	defer func() {
 		if err := server.Close(); err != nil {
-			slog.Error(jErrors.ErrorStack(err))
+			slog.Error(jErrors.Details(err))
 		}
 	}()
 
 	if err := server.ListenAndServe(); err != nil {
-		slog.Error(jErrors.ErrorStack(err))
+		slog.Error(jErrors.Details(err))
 		return 1
 	}
 
